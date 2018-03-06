@@ -2,8 +2,8 @@ package dsa
 
 import (
 	"crypto/dsa"
-	"crypto/md5"
 	"crypto/rand"
+	"crypto/sha1"
 	"crypto/x509"
 	"encoding/asn1"
 	"encoding/pem"
@@ -104,11 +104,11 @@ func ParseDSAPublicKeyFromFile(path string) (*dsa.PublicKey, error) {
 }
 
 func Sign(priv *dsa.PrivateKey, content []byte) (*big.Int, *big.Int, error) {
-	sum := md5.Sum(content)
+	sum := sha1.Sum(content)
 	return dsa.Sign(rand.Reader, priv, sum[:])
 }
 
 func Verify(pub *dsa.PublicKey, content []byte, r, s *big.Int) bool {
-	sum := md5.Sum(content)
+	sum := sha1.Sum(content)
 	return dsa.Verify(pub, sum[:], r, s)
 }
