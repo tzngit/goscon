@@ -11,17 +11,6 @@ import (
 	"github.com/xjdrew/gosproto"
 )
 
-type sprotoPackage struct {
-	Type    int32 `sproto:"integer,0,name=type"`
-	Session int32 `sproto:"integer,1,name=session"`
-	Ud      int32 `sproto:"integer,2,name=ud"`
-}
-
-type sprotoAnnounceAddr struct {
-	RemoteAddr string `sproto:"string,0,name=remote_addr"`
-	LocalAddr  string `sproto:"string,1,name=local_addr"`
-}
-
 type SprotoConnWrapper struct {
 	writer  func(wr io.Writer, data []byte) (int, error)
 	msgType int32
