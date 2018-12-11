@@ -18,7 +18,7 @@ import (
 	"sync"
 	"syscall"
 
-	"github.com/ejoy/goscon/scp"
+	"github.com/tzngit/goscon/scp"
 )
 
 var errNoHost = errors.New("no host")
