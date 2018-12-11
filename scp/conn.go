@@ -8,6 +8,8 @@ import (
 	"net"
 	"sync"
 	"time"
+	"errors"
+	"fmt"
 
 	"github.com/ejoy/goscon/dh64"
 )
@@ -173,7 +175,7 @@ func (c *Conn) initReuseConn(oldConn *Conn, handshakes int) {
 
 func (c *Conn) writeRecord(msg handshakeMessage) error {
 	data := msg.marshal()
-	sz := uint16(len(data))
+	sz := uint32(len(data))
 
 	w := bufio.NewWriter(c.conn)
 	err := binary.Write(w, binary.BigEndian, sz)
@@ -189,11 +191,14 @@ func (c *Conn) writeRecord(msg handshakeMessage) error {
 }
 
 func (c *Conn) readRecord(msg handshakeMessage) error {
-	var sz uint16
+	var sz uint32
 	if err := binary.Read(c.conn, binary.BigEndian, &sz); err != nil {
 		return err
 	}
-
+	if sz > 0xffff {
+		fmt.Printf("receive too large packet[%d]\n", sz)
+		return errors.New("larger packet than 0xffff")
+	}
 	buf := make([]byte, sz)
 	sum := 0
 	for sum < int(sz) {
@@ -301,7 +306,6 @@ OuterLoop:
 			rp.code = SCPStatusIDNotFound
 			break OuterLoop
 		}
-
 		if !rq.verifySum(oldConn.secret) {
 			rp.code = SCPStatusUnauthorized
 			break OuterLoop
