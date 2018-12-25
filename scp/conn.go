@@ -4,14 +4,14 @@ import (
 	"bufio"
 	"crypto/rc4"
 	"encoding/binary"
+	"errors"
+	"fmt"
 	"io"
 	"net"
 	"sync"
 	"time"
-	"errors"
-	"fmt"
 
-	"github.com/ejoy/goscon/dh64"
+	"github.com/tzngit/goscon/dh64"
 )
 
 type cipherConnReader struct {
@@ -308,6 +308,7 @@ OuterLoop:
 		}
 		if !rq.verifySum(oldConn.secret) {
 			rp.code = SCPStatusUnauthorized
+			fmt.Printf("[%d] 401 unauthorized\n", rq.id)
 			break OuterLoop
 		}
 
